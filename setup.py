@@ -8,7 +8,7 @@ import rtc
 import time
 import microcontroller
 
-def setup():
+def setup(IO = True):
     my_rtc = rtc.RTC()
     ADAFRUIT_IO_USERNAME = secrets['aio_username']
     ADAFRUIT_IO_KEY = secrets['aio_key']
@@ -22,14 +22,20 @@ def setup():
         # Create a requests session
         requests = adafruit_requests.Session(pool, ssl.create_default_context())
 
-        # Initialize Adafruit IO HTTP API object
-        io = IO_HTTP(ADAFRUIT_IO_USERNAME, ADAFRUIT_IO_KEY, requests)
+        if IO:
+                
+            # Initialize Adafruit IO HTTP API object
+            io = IO_HTTP(ADAFRUIT_IO_USERNAME, ADAFRUIT_IO_KEY, requests)
 
-        print("Connected to Adafruit IO!")
-        current_time = io.receive_time()
-        my_rtc.datetime = current_time
-        print(f"Current Date and Time: {my_rtc.datetime.tm_year}-{my_rtc.datetime.tm_mon:02d}-{my_rtc.datetime.tm_mday:02d} {my_rtc.datetime.tm_hour:02d}:{my_rtc.datetime.tm_min:02d}:{my_rtc.datetime.tm_sec:02d}")
-        return io
+            print("Connected to Adafruit IO!")
+            current_time = io.receive_time()
+            my_rtc.datetime = current_time
+            print(f"Current Date and Time: {my_rtc.datetime.tm_year}-{my_rtc.datetime.tm_mon:02d}-{my_rtc.datetime.tm_mday:02d} {my_rtc.datetime.tm_hour:02d}:{my_rtc.datetime.tm_min:02d}:{my_rtc.datetime.tm_sec:02d}")
+        
+            return io
+
+        else:    
+            return requests
 
     except Exception as e:
         print(f"An error occurred: {e}")
